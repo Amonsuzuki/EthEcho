@@ -9,6 +9,10 @@ interface Echo {
   message: string;
 }
 
+interface CustomWindow extends Window {
+  ethereum?: any;
+}
+
 const buttonStyle =
   "flex w-full justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
 
@@ -35,7 +39,7 @@ export default function Home() {
   const contractABI = abi.abi;
 
   const checkIfWalletIsConnected = async () => {
-    const { ethereum } = window as any;
+    const { ethereum } = window as CustomWindow;
     if (!ethereum) {
       console.log("Make sure you have MetaMask!");
     } else {
@@ -55,7 +59,7 @@ export default function Home() {
 
   const connectWallet = async () => {
     try {
-      const { ethereum } = window as any;
+      const { ethereum } = window as CustomWindow;
       if (!ethereum) {
         alert("Get MetaMask!");
         return;
@@ -72,7 +76,7 @@ export default function Home() {
 
   const writeEcho = async () => {
     try {
-      const { ethereum } = window as any;
+      const { ethereum } = window as CustomWindow;
       if (ethereum) {
         const provider = new ethers.BrowserProvider(ethereum);
         const signer = await provider.getSigner();
@@ -100,7 +104,7 @@ export default function Home() {
   };
 
   const getLatestEcho = async () => {
-    const { ethereum } = window as any;
+    const { ethereum } = window as CustomWindow;
     try {
       if (ethereum) {
         const provider = new ethers.BrowserProvider(ethereum);
@@ -132,8 +136,10 @@ export default function Home() {
       const onNewEcho = (from: string, timestamp: number, message: string) => {
         console.log("NewEcho", from, timestamp, message);
       };
-      if ((window as any).ethereum) {
-        const provider = new ethers.BrowserProvider((window as any).ethereum);
+      if ((window as CustomWindow).ethereum) {
+        const provider = new ethers.BrowserProvider(
+          (window as CustomWindow).ethereum
+        );
         const signer = await provider.getSigner();
         ethEchoContract = new ethers.Contract(
           contractAddress,
